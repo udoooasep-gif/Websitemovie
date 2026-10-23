@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Layar Kita – Info Film & Booking Tiket</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1f0d17; --surface: #2d1624; --line: #4a2a3b;
+      --text: #f6ebe6; --muted: #b99ba8; --brass: #e0a93b; --wa: #25d366;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Figtree', sans-serif; }
+    h1, h2, .brand, .movie-title { font-family: 'Bricolage Grotesque', sans-serif; }
+    a { color: var(--brass); }
+    .topbar { background: var(--bg); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 20; }
+    .brand { font-weight: 800; font-size: 1.5rem; color: var(--text); text-decoration: none; }
+    .brand span { color: var(--brass); }
+    .form-control { background: var(--surface); border-color: var(--line); color: var(--text); }
+    .form-control:focus { background: var(--surface); color: var(--text); border-color: var(--brass); box-shadow: 0 0 0 .2rem rgba(224,169,59,.25); }
+    .form-control::placeholder { color: var(--muted); }
+    .btn-brass { background: var(--brass); color: #2a1a05; font-weight: 600; border: 0; }
+    .btn-brass:hover { background: #f0bb52; color: #2a1a05; }
+    .btn-wa { background: var(--wa); color: #06311a; font-weight: 600; border: 0; }
+    .btn-wa:hover { background: #3be27c; color: #06311a; }
+
+    .hero { padding: 3.5rem 0 2.5rem; border-bottom: 1px solid var(--line); }
+    .hero h1 { font-weight: 800; font-size: clamp(2.2rem, 6vw, 4rem); line-height: 1.05; max-width: 14ch; }
+    .hero p { color: var(--muted); max-width: 46ch; font-size: 1.1rem; }
+    .stub { border: 2px dashed var(--brass); border-radius: .75rem; padding: 1.25rem 1.5rem; max-width: 20rem; transform: rotate(2deg); background: var(--surface); }
+    .stub strong { font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.4rem; color: var(--brass); }
+
+    .tabs .btn { border: 1px solid var(--line); color: var(--muted); background: transparent; }
+    .tabs .btn.active { background: var(--brass); color: #2a1a05; border-color: var(--brass); font-weight: 600; }
+
+    .movie-card { background: var(--surface); border: 1px solid var(--line); cursor: pointer; height: 100%; overflow: hidden; }
+    .movie-card:hover, .movie-card:focus-visible { border-color: var(--brass); outline: none; }
+    .movie-card img { aspect-ratio: 2 / 3; object-fit: cover; background: var(--line); }
+    .movie-title { font-size: 1rem; font-weight: 600; color: var(--text); }
+    .rating { color: var(--brass); font-weight: 600; }
+
+    .page-link { background: var(--surface); border-color: var(--line); color: var(--text); }
+    .page-link:hover { background: var(--line); color: var(--brass); }
+    .page-item.active .page-link { background: var(--brass); border-color: var(--brass); color: #2a1a05; }
+    .page-item.disabled .page-link { background: var(--bg); border-color: var(--line); color: #7d6270; }
+
+    .modal-content { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+    .modal-header, .modal-footer { border-color: var(--line); }
+    .detail-poster { width: 100%; border-radius: .5rem; background: var(--line); }
+    .genre-badge { background: var(--line); color: var(--text); font-weight: 500; }
+
+    .wa-float { position: fixed; right: 1rem; bottom: 1rem; z-index: 30; box-shadow: 0 6px 20px rgba(0,0,0,.45); border-radius: 50rem; padding: .75rem 1.25rem; }
+    footer { border-top: 1px solid var(--line); color: var(--muted); }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar py-3">
+    <div class="container d-flex flex-wrap gap-3 justify-content-between align-items-center">
+      <a class="brand" href="#">Layar<span>Kita</span></a>
+      <form id="searchForm" class="d-flex gap-2" role="search">
+        <input id="searchInput" type="search" class="form-control" placeholder="Cari judul film" aria-label="Cari judul film">
+        <button class="btn btn-brass" type="submit">Cari</button>
+      </form>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container d-flex flex-wrap gap-4 justify-content-between align-items-center">
+      <div>
+        <h1>Pilih film, pesan kursi lewat WhatsApp.</h1>
+        <p class="mt-3">Lihat film yang sedang tayang dan segera tayang, baca sinopsisnya, lalu kirim permintaan booking langsung ke kami.</p>
+        <a class="btn btn-wa btn-lg" href="#daftar">Lihat daftar film</a>
+      </div>
+      <div class="stub">
+        <strong>Tiket bioskop</strong>
+        <div class="text-secondary mt-1">Tanya jadwal, pilih jam tayang, dan konfirmasi kursi lewat chat.</div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container py-4" id="daftar">
+    <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center mb-3">
+      <h2 id="listTitle" class="h4 m-0">Film populer</h2>
+      <div class="tabs btn-group" role="group" aria-label="Kategori film">
+        <button type="button" class="btn active" data-cat="popular">Populer</button>
+        <button type="button" class="btn" data-cat="now_playing">Sedang tayang</button>
+        <button type="button" class="btn" data-cat="upcoming">Segera tayang</button>
+      </div>
+    </div>
+
+    <div id="status" class="text-center py-5 d-none"></div>
+    <div id="movieList" class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3"></div>
+    <nav class="mt-4" aria-label="Navigasi halaman">
+      <ul id="pagination" class="pagination justify-content-center flex-wrap"></ul>
+    </nav>
+  </main>
+
+  <footer class="py-4 mt-4">
+    <div class="container small">Data film dari TMDB. Produk ini menggunakan TMDB API tetapi tidak didukung atau disertifikasi oleh TMDB.</div>
+  </footer>
+
+  <a class="btn btn-wa wa-float" href="https://wa.me/62895622381822?text=Halo%2C%20saya%20mau%20tanya%20jadwal%20dan%20booking%20tiket%20bioskop." target="_blank" rel="noopener">Booking via WhatsApp</a>
+
+  <!-- Modal detail film -->
+  <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5" id="detailTitle">Detail film</h2>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body" id="detailBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ====== KONFIGURASI ======
+    const API_KEY = 'ac5f257e4f9db9a25837a5599e8ef2a7'; // sebaiknya ganti dengan key milik Anda sendiri
+    const WA_NUMBER = '62895622381822';
+    const BASE_URL = 'https://api.themoviedb.org/3';
+    const IMG_URL = 'https://image.tmdb.org/t/p/w500';
+    const NO_POSTER = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="750"><rect width="100%" height="100%" fill="#4a2a3b"/>' +
+      '<text x="50%" y="50%" fill="#b99ba8" font-family="sans-serif" font-size="28" text-anchor="middle">Tanpa poster</text></svg>');
+    const CAT_TITLES = { popular: 'Film populer', now_playing: 'Sedang tayang', upcoming: 'Segera tayang' };
+
+    const PER_PAGE = 10, TMDB_PER_PAGE = 20, TMDB_MAX_PAGE = 500;
+    let state = { page: 1, query: '', cat: 'popular' };
+    const cache = {};
+
+    function esc(s) { return $('<div>').text(s == null ? '' : s).html(); }
+    function year(d) { return d ? d.substring(0, 4) : '-'; }
+    function rate(v) { return v ? v.toFixed(1) : '-'; }
+    function showStatus(html, isError) { $('#status').removeClass('d-none').toggleClass('text-danger', !!isError).html(html); }
+    function hideStatus() { $('#status').addClass('d-none').empty(); }
+
+    function fetchTmdbPage(tmdbPage) {
+      const key = state.cat + '|' + state.query + '|' + tmdbPage;
+      if (cache[key]) return $.Deferred().resolve(cache[key]).promise();
+      const path = state.query ? '/search/movie' : '/movie/' + state.cat;
+      const params = { api_key: API_KEY, language: 'id-ID', page: tmdbPage, region: 'ID' };
+      if (state.query) params.query = state.query;
+      return $.ajax({ url: BASE_URL + path, method: 'GET', data: params, dataType: 'json' })
+        .then(function (res) { cache[key] = res; return res; });
+    }
+
+    function loadMovies() {
+      const tmdbPage = Math.ceil(state.page / 2);
+      const offset = ((state.page - 1) % 2) * PER_PAGE;
+      $('#movieList').empty(); $('#pagination').empty();
+      showStatus('<div class="spinner-border" style="color:var(--brass)" role="status"></div><div class="mt-2">Memuat film...</div>');
+
+      fetchTmdbPage(tmdbPage).done(function (res) {
+        hideStatus();
+        const movies = res.results.slice(offset, offset + PER_PAGE);
+        if (movies.length === 0) { showStatus('Film tidak ditemukan. Coba kata kunci lain.'); return; }
+        renderMovies(movies);
+        const totalTmdbPages = Math.min(res.total_pages, TMDB_MAX_PAGE);
+        const totalPages = Math.max(1, Math.ceil(Math.min(res.total_results, totalTmdbPages * TMDB_PER_PAGE) / PER_PAGE));
+        renderPagination(totalPages);
+      }).fail(function (xhr) {
+        showStatus(xhr.status === 401
+          ? 'API key tidak valid. Periksa nilai API_KEY di file ini.'
+          : 'Gagal memuat data. Periksa koneksi internet Anda lalu coba lagi.', true);
+      });
+    }
+
+    function renderMovies(movies) {
+      $('#movieList').html(movies.map(function (m) {
+        const poster = m.poster_path ? IMG_URL + m.poster_path : NO_POSTER;
+        return '<div class="col"><div class="card movie-card" data-id="' + m.id + '" tabindex="0" role="button">' +
+          '<img src="' + poster + '" class="card-img-top" alt="Poster ' + esc(m.title) + '" loading="lazy">' +
+          '<div class="card-body p-2"><div class="movie-title">' + esc(m.title) + '</div>' +
+          '<div class="d-flex justify-content-between small mt-1"><span class="text-secondary">' + year(m.release_date) + '</span>' +
+          '<span class="rating">★ ' + rate(m.vote_average) + '</span></div></div></div></div>';
+      }).join(''));
+    }
+
+    function renderPagination(totalPages) {
+      const cur = state.page;
+      const start = Math.max(1, Math.min(cur - 2, totalPages - 4));
+      const end = Math.min(totalPages, start + 4);
+      let html = '';
+      function item(label, page, disabled, active) {
+        return '<li class="page-item' + (disabled ? ' disabled' : '') + (active ? ' active' : '') + '">' +
+          '<a class="page-link" href="#" data-page="' + page + '">' + label + '</a></li>';
+      }
+      html += item('Sebelumnya', cur - 1, cur === 1, false);
+      if (start > 1) html += item('1', 1, false, false) + (start > 2 ? item('…', cur, true, false) : '');
+      for (let p = start; p <= end; p++) html += item(p, p, false, p === cur);
+      if (end < totalPages) html += (end < totalPages - 1 ? item('…', cur, true, false) : '') + item(totalPages, totalPages, false, false);
+      html += item('Berikutnya', cur + 1, cur === totalPages, false);
+      $('#pagination').html(html);
+    }
+
+    function loadDetail(id) {
+      $('#detailTitle').text('Memuat...');
+      $('#detailBody').html('<div class="text-center py-5"><div class="spinner-border" style="color:var(--brass)" role="status"></div></div>');
+      bootstrap.Modal.getOrCreateInstance('#detailModal').show();
+
+      $.ajax({ url: BASE_URL + '/movie/' + id, method: 'GET', data: { api_key: API_KEY, language: 'id-ID' }, dataType: 'json' })
+      .done(function (m) {
+        const poster = m.poster_path ? IMG_URL + m.poster_path : NO_POSTER;
+        const genres = (m.genres || []).map(function (g) {
+          return '<span class="badge genre-badge me-1 mb-1">' + esc(g.name) + '</span>';
+        }).join('') || '<span class="text-secondary">-</span>';
+        const wa = 'https://wa.me/' + WA_NUMBER + '?text=' +
+          encodeURIComponent('Halo, saya mau booking tiket film "' + m.title + '". Mohon info jadwal dan kursi yang tersedia.');
+
+        $('#detailTitle').text(m.title);
+        $('#detailBody').html(
+          '<div class="row g-4">' +
+            '<div class="col-12 col-md-4"><img class="detail-poster" src="' + poster + '" alt="Poster ' + esc(m.title) + '"></div>' +
+            '<div class="col-12 col-md-8">' +
+              '<h3 class="h4">' + esc(m.title) + '</h3>' +
+              (m.tagline ? '<p class="fst-italic text-secondary">' + esc(m.tagline) + '</p>' : '') +
+              '<dl class="row mb-2">' +
+                '<dt class="col-4 col-sm-3">Tahun rilis</dt><dd class="col-8 col-sm-9">' + year(m.release_date) + '</dd>' +
+                '<dt class="col-4 col-sm-3">Durasi</dt><dd class="col-8 col-sm-9">' + (m.runtime ? m.runtime + ' menit' : '-') + '</dd>' +
+                '<dt class="col-4 col-sm-3">Rating</dt><dd class="col-8 col-sm-9 rating">★ ' + rate(m.vote_average) + ' <span class="text-secondary fw-normal">(' + (m.vote_count || 0) + ' suara)</span></dd>' +
+                '<dt class="col-4 col-sm-3">Genre</dt><dd class="col-8 col-sm-9">' + genres + '</dd>' +
+              '</dl>' +
+              '<h4 class="h6">Sinopsis</h4>' +
+              '<p>' + (m.overview ? esc(m.overview) : 'Sinopsis belum tersedia.') + '</p>' +
+              '<a class="btn btn-wa" href="' + wa + '" target="_blank" rel="noopener">Booking film ini via WhatsApp</a>' +
+            '</div>' +
+          '</div>');
+      }).fail(function () {
+        $('#detailTitle').text('Detail film');
+        $('#detailBody').html('<p class="text-danger mb-0">Gagal memuat detail film. Tutup jendela ini lalu coba lagi.</p>');
+      });
+    }
+
+    // ====== EVENT ======
+    function updateTitle() {
+      $('#listTitle').text(state.query ? 'Hasil pencarian: "' + state.query + '"' : CAT_TITLES[state.cat]);
+    }
+
+    $('#searchForm').on('submit', function (e) {
+      e.preventDefault();
+      state.query = $.trim($('#searchInput').val());
+      state.page = 1; updateTitle(); loadMovies();
+    });
+
+    $('.tabs').on('click', '.btn', function () {
+      $('.tabs .btn').removeClass('active'); $(this).addClass('active');
+      state.cat = $(this).data('cat'); state.query = ''; state.page = 1;
+      $('#searchInput').val(''); updateTitle(); loadMovies();
+    });
+
+    $('#pagination').on('click', 'a.page-link', function (e) {
+      e.preventDefault();
+      if ($(this).parent().hasClass('disabled')) return;
+      state.page = parseInt($(this).data('page'), 10);
+      loadMovies();
+      document.getElementById('daftar').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    $('#movieList').on('click', '.movie-card', function () {
+      loadDetail($(this).data('id'));
+    }).on('keydown', '.movie-card', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); loadDetail($(this).data('id')); }
+    });
+
+    loadMovies();
+  </script>
+</body>
+</html>
